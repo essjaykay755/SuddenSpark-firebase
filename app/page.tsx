@@ -8,13 +8,8 @@ import SubmitForm from "@/components/SubmitForm";
 import SendFeedbackForm from "@/components/SendFeedbackForm";
 import Modal from "@/components/Modal";
 import { getFilteredThoughts } from "@/lib/thoughts";
-import { PlusCircle } from "lucide-react";
-
+import { PlusCircle, Loader2 } from "lucide-react";
 import { Thought } from "@/types/thought";
-
-// ... (rest of the file content remains the same)
-
-// ... (rest of the file content remains the same)
 
 export default function Home() {
   const [thoughts, setThoughts] = useState<Thought[]>([]);
@@ -24,12 +19,21 @@ export default function Home() {
   const [visibleThoughts, setVisibleThoughts] = useState(9);
   const [showSubmitForm, setShowSubmitForm] = useState(false);
   const [showFeedbackForm, setShowFeedbackForm] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchThoughts = async () => {
-      const fetchedThoughts = await getFilteredThoughts(activeFilter);
-      setThoughts(fetchedThoughts);
-      setVisibleThoughts(9);
+      setIsLoading(true);
+      try {
+        const fetchedThoughts = await getFilteredThoughts(activeFilter);
+        setThoughts(fetchedThoughts);
+        setVisibleThoughts(9);
+      } catch (error) {
+        console.error("Error fetching thoughts:", error);
+        // Handle error (e.g., show error message to user)
+      } finally {
+        setIsLoading(false);
+      }
     };
     fetchThoughts();
   }, [activeFilter]);
@@ -69,7 +73,13 @@ export default function Home() {
           onFilterChange={handleFilterChange}
           activeFilter={activeFilter}
         />
-        <ThoughtList thoughts={thoughts.slice(0, visibleThoughts)} />
+        {isLoading ? (
+          <div className="flex justify-center items-center h-64">
+            <Loader2 className="animate-spin h-32 w-32 text-[#FCBA28]" />
+          </div>
+        ) : (
+          <ThoughtList thoughts={thoughts.slice(0, visibleThoughts)} />
+        )}
         {visibleThoughts < thoughts.length && (
           <div className="flex justify-center mt-12">
             <button

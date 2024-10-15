@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { submitThought } from "@/lib/thoughts";
 import { motion } from "framer-motion";
+import { Loader2 } from "lucide-react";
 
 interface SubmitFormProps {
   onClose: () => void;
@@ -13,12 +14,21 @@ export default function SubmitForm({ onClose, onSubmit }: SubmitFormProps) {
   const [content, setContent] = useState("");
   const [username, setUsername] = useState("");
   const [twitter, setTwitter] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await submitThought({ content, username, twitter });
-    onSubmit();
-    onClose();
+    setIsSubmitting(true);
+    try {
+      await submitThought({ content, username, twitter });
+      onSubmit();
+      onClose();
+    } catch (error) {
+      console.error("Error submitting thought:", error);
+      // Handle error (e.g., show error message to user)
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -67,7 +77,7 @@ export default function SubmitForm({ onClose, onSubmit }: SubmitFormProps) {
         <div>
           <label
             htmlFor="twitter"
-            className="block text-sm font-medium text-[#0F0D0E]"
+            className="block text-sm font-medium  text-[#0F0D0E]"
           >
             X (Twitter) Handle (optional)
           </label>
@@ -81,9 +91,17 @@ export default function SubmitForm({ onClose, onSubmit }: SubmitFormProps) {
         </div>
         <button
           type="submit"
-          className="w-full bg-[#0F0D0E] text-white rounded-md py-3 px-4 hover:bg-[#231F20] transition-colors duration-200"
+          className="w-full bg-[#0F0D0E] text-white rounded-md py-3 px-4 hover:bg-[#231F20] transition-colors duration-200 flex items-center justify-center"
+          disabled={isSubmitting}
         >
-          Submit
+          {isSubmitting ? (
+            <>
+              <Loader2 className="animate-spin mr-2" size={20} />
+              Submitting...
+            </>
+          ) : (
+            "Submit"
+          )}
         </button>
       </form>
     </motion.div>

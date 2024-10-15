@@ -10,6 +10,8 @@ import {
   limit,
   where,
   Timestamp,
+  increment,
+  getDoc,
 } from "firebase/firestore";
 import { Thought } from "@/types/thought";
 
@@ -66,7 +68,7 @@ export async function getFilteredThoughts(
       q = query(
         thoughtsCol,
         orderBy("votes.like", "desc"),
-        orderBy("votes.heart", "desc"),
+        orderBy("createdAt", "desc"),
         limit(100)
       );
       break;
@@ -91,22 +93,27 @@ export async function voteThought(
 ): Promise<void> {
   const thoughtRef = doc(db, "thoughts", id);
 
-  if (previousVote === voteType) {
-    // User is un-voting
-    await updateDoc(thoughtRef, {
-      [`votes.${previousVote}`]: increment(-1),
-    });
-  } else if (previousVote === null) {
-    // User is voting for the first time
-    await updateDoc(thoughtRef, {
-      [`votes.${voteType}`]: increment(1),
-    });
+  const updates: { [key: string]: any } = {};
+
+  if (previousVote) {
+    updates[`votes.${previousVote}`] = increment(-1);
+  }
+
+  if (voteType) {
+    updates[`votes.${voteType}`] = increment(1);
+  }
+
+  await updateDoc(thoughtRef, updates);
+}
+
+export async function getThoughtById(id: string): Promise<Thought | null> {
+  const thoughtRef = doc(db, "thoughts", id);
+  const thoughtSnap = await getDoc(thoughtRef);
+
+  if (thoughtSnap.exists()) {
+    return { id: thoughtSnap.id, ...thoughtSnap.data() } as Thought;
   } else {
-    // User is changing their vote
-    await updateDoc(thoughtRef, {
-      [`votes.${previousVote}`]: increment(-1),
-      [`votes.${voteType}`]: increment(1),
-    });
+    return null;
   }
 }
 
@@ -120,11 +127,4 @@ function getRandomColor(): string {
     "rgb(18 181 229)",
   ];
   return colors[Math.floor(Math.random() * colors.length)];
-}
-
-function increment(amount: number) {
-  return {
-    __op: "increment",
-    __amount: amount,
-  };
 }
