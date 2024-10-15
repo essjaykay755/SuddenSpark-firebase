@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 255, 255, 255;
+  --foreground: 0, 0, 0;
+  --card-background: 249, 250, 251;
+  --card-foreground: 17, 24, 39;
+  --accent: 252, 186, 40;
+}
+
+.dark {
+  --background: 15, 13, 14;
+  --foreground: 255, 255, 255;
+  --card-background: 31, 41, 55;
+  --card-foreground: 243, 244, 246;
+}
+
+body {
+  background-color: rgb(var(--background));
+  color: rgb(var(--foreground));
+}
+
+.card {
+  background-color: rgb(var(--card-background));
+  color: rgb(var(--card-foreground));
+}
+
+.accent-bg {
+  background-color: rgb(var(--accent));
+}
+
+.accent-text {
+  color: rgb(var(--accent));
+}
