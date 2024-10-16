@@ -7,7 +7,7 @@ import { Loader2 } from "lucide-react";
 
 interface SubmitFormProps {
   onClose: () => void;
-  onSubmit: () => void;
+  onSubmit: () => Promise<void>;
 }
 
 export default function SubmitForm({ onClose, onSubmit }: SubmitFormProps) {
@@ -21,7 +21,7 @@ export default function SubmitForm({ onClose, onSubmit }: SubmitFormProps) {
     setIsSubmitting(true);
     try {
       await submitThought({ content, username, twitter });
-      onSubmit();
+      await onSubmit();
       onClose();
     } catch (error) {
       console.error("Error submitting thought:", error);
@@ -77,7 +77,7 @@ export default function SubmitForm({ onClose, onSubmit }: SubmitFormProps) {
         <div>
           <label
             htmlFor="twitter"
-            className="block text-sm font-medium  text-[#0F0D0E]"
+            className="block text-sm font-medium text-[#0F0D0E]"
           >
             X (Twitter) Handle (optional)
           </label>
