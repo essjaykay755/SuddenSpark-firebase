@@ -4,7 +4,6 @@ import {
   submitThought,
   voteThought,
 } from "@/lib/thoughts";
-import { Thought } from "@/types/thought";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -25,7 +24,11 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const thought = await request.json();
-    await submitThought(thought);
+    await submitThought({
+      content: thought.content,
+      username: thought.username,
+      twitter: thought.twitter,
+    });
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error in POST /api/thoughts:", error);

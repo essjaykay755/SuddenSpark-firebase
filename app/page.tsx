@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import ThoughtList from "@/components/ThoughtList";
 import FilterBar from "@/components/FilterBar";
 import SubmitForm from "@/components/SubmitForm";

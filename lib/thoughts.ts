@@ -12,6 +12,7 @@ import {
   Timestamp,
   increment,
   getDoc,
+  FieldValue as FirebaseFirestoreFieldValue,
 } from "firebase/firestore";
 import { Thought } from "@/types/thought";
 
@@ -93,7 +94,7 @@ export async function voteThought(
 ): Promise<void> {
   const thoughtRef = doc(db, "thoughts", id);
 
-  const updates: { [key: string]: any } = {};
+  const updates: { [key: string]: FirebaseFirestoreFieldValue } = {};
 
   if (previousVote) {
     updates[`votes.${previousVote}`] = increment(-1);

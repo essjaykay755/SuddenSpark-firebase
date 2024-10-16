@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Flame, Clock, TrendingUp } from "lucide-react";
 
 interface FilterBarProps {
