@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import SubmitForm from "@/components/SubmitForm";
 import { useRouter } from "next/navigation";
 import { getFilteredThoughts } from "@/lib/thoughts";
