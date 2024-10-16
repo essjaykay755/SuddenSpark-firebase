@@ -7,17 +7,13 @@ import { getFilteredThoughts } from "@/lib/thoughts";
 
 export default function SubmitPage() {
   const router = useRouter();
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async () => {
-    setIsSubmitting(true);
     try {
       await getFilteredThoughts("new"); // Refresh the thoughts
       router.push("/"); // Redirect to home page after submission
     } catch (error) {
       console.error("Error submitting thought:", error);
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
