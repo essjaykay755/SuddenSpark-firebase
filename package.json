@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.21.0",
     "@types/tinycolor2": "^1.4.6",
     "better-sqlite3": "^11.3.0",
     "firebase": "^10.14.0",

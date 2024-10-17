@@ -15,18 +15,45 @@ export default function SubmitForm({ onClose, onSubmit }: SubmitFormProps) {
   const [username, setUsername] = useState("");
   const [twitter, setTwitter] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isChecking, setIsChecking] = useState(false);
+  const [checkResult, setCheckResult] = useState<string | null>(null);
+
+  const checkContent = async (content: string) => {
+    const response = await fetch("/api/check-content", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ content }),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
+    setIsChecking(true);
+    setCheckResult(null);
+
     try {
-      await submitThought({ content, username, twitter });
-      await onSubmit();
-      onClose();
+      const { isValid, reason } = await checkContent(content);
+      if (isValid) {
+        setIsSubmitting(true);
+        await submitThought({ content, username, twitter });
+        await onSubmit();
+        onClose();
+      } else {
+        setCheckResult(reason);
+      }
     } catch (error) {
       console.error("Error submitting thought:", error);
-      // Handle error (e.g., show error message to user)
+      setCheckResult(
+        "An error occurred while checking the content. Please try again."
+      );
     } finally {
+      setIsChecking(false);
       setIsSubmitting(false);
     }
   };
@@ -92,9 +119,14 @@ export default function SubmitForm({ onClose, onSubmit }: SubmitFormProps) {
         <button
           type="submit"
           className="w-full bg-[#0F0D0E] text-white rounded-md py-3 px-4 hover:bg-[#231F20] transition-colors duration-200 flex items-center justify-center"
-          disabled={isSubmitting}
+          disabled={isChecking || isSubmitting}
         >
-          {isSubmitting ? (
+          {isChecking ? (
+            <>
+              <Loader2 className="animate-spin mr-2" size={20} />
+              Checking content...
+            </>
+          ) : isSubmitting ? (
             <>
               <Loader2 className="animate-spin mr-2" size={20} />
               Submitting...
@@ -103,6 +135,9 @@ export default function SubmitForm({ onClose, onSubmit }: SubmitFormProps) {
             "Submit"
           )}
         </button>
+        {checkResult && (
+          <div className="mt-2 text-red-500 text-sm">{checkResult}</div>
+        )}
       </form>
     </motion.div>
   );
