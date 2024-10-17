@@ -18,6 +18,8 @@ export default function SubmitForm({ onClose, onSubmit }: SubmitFormProps) {
   const [isChecking, setIsChecking] = useState(false);
   const [checkResult, setCheckResult] = useState<string | null>(null);
 
+  const MAX_CHARS = 160;
+
   const checkContent = async (content: string) => {
     const response = await fetch("/api/check-content", {
       method: "POST",
@@ -79,11 +81,15 @@ export default function SubmitForm({ onClose, onSubmit }: SubmitFormProps) {
           <textarea
             id="content"
             value={content}
-            onChange={(e) => setContent(e.target.value)}
+            onChange={(e) => setContent(e.target.value.slice(0, MAX_CHARS))}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0F0D0E] focus:ring-[#0F0D0E] bg-white dark:bg-[#0F0D0E] text-gray-900 dark:text-white p-3"
             rows={4}
             required
+            maxLength={MAX_CHARS}
           />
+          <div className="text-sm text-[#0F0D0E] mt-1">
+            {content.length}/{MAX_CHARS} characters
+          </div>
         </div>
         <div>
           <label

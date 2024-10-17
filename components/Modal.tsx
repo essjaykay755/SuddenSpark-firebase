@@ -46,7 +46,7 @@ export default function Modal({ children, onClose }: ModalProps) {
         >
           <button
             onClick={onClose}
-            className="absolute -top-12 -right-12 bg-[#FCBA28] text-[#0F0D0E] rounded-full p-2 hover:bg-[#fcc85c] transition-colors duration-200"
+            className="absolute -top-12 right-0 sm:-right-12 bg-[#FCBA28] text-[#0F0D0E] rounded-full p-2 hover:bg-[#fcc85c] transition-colors duration-200"
             aria-label="Close modal"
           >
             <X size={24} />
