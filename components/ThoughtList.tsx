@@ -244,41 +244,51 @@ function ThoughtCard({
 
   return (
     <div
-      className="card p-6 rounded-lg shadow-lg relative h-64 flex flex-col cursor-pointer overflow-hidden"
+      className={`card rounded-lg shadow-lg relative ${
+        fullContent ? "h-full flex flex-col" : "h-64"
+      } overflow-hidden`}
       style={{ backgroundColor: thought.bgColor, color: textColor }}
       onClick={handleClick}
     >
-      <div className="flex-grow overflow-hidden mb-4">
-        <p
-          className={`text-lg font-semibold ${
-            fullContent ? "" : "line-clamp-3"
-          }`}
-        >
-          {thought.content}
-        </p>
+      <div className={`p-6 ${fullContent ? "flex-grow overflow-y-auto" : ""}`}>
+        <div className={`${fullContent ? "" : "h-full flex flex-col"}`}>
+          <p
+            className={`text-lg font-semibold ${
+              fullContent ? "" : "line-clamp-3 mb-4"
+            }`}
+          >
+            {thought.content}
+          </p>
+          <div className={`${fullContent ? "mt-4" : "mt-auto"}`}>
+            <button
+              className="text-sm hover:underline flex items-center"
+              onClick={(e) => {
+                e.preventDefault();
+                onUsernameClick(thought.username);
+              }}
+              style={{ color: textColor }}
+            >
+              {thought.twitter ? (
+                <>
+                  <X size={16} className="mr-1" />@{thought.twitter}
+                </>
+              ) : (
+                <>By {thought.username}</>
+              )}
+            </button>
+            <span className="text-xs opacity-75" style={{ color: textColor }}>
+              Posted on {formatDate(thought.createdAt)}
+            </span>
+          </div>
+        </div>
       </div>
-      <div className="flex flex-col items-start">
-        <button
-          className="text-sm hover:underline flex items-center"
-          onClick={(e) => {
-            e.preventDefault();
-            onUsernameClick(thought.username);
-          }}
-          style={{ color: textColor }}
-        >
-          {thought.twitter ? (
-            <>
-              <X size={16} className="mr-1" />@{thought.twitter}
-            </>
-          ) : (
-            <>By {thought.username}</>
-          )}
-        </button>
-        <span className="text-xs opacity-75" style={{ color: textColor }}>
-          Posted on {formatDate(thought.createdAt)}
-        </span>
-      </div>
-      <div className="absolute right-4 bottom-4 flex flex-col space-y-1">
+      <div
+        className={`p-4 ${
+          fullContent
+            ? "border-t border-opacity-20"
+            : "absolute right-4 bottom-4"
+        } flex ${fullContent ? "justify-end" : "flex-col space-y-1"}`}
+      >
         <VoteButton
           icon="👍"
           count={getVoteCount("like")}
@@ -341,7 +351,7 @@ function VoteButton({
     <button
       className={`flex items-center justify-between rounded-full px-2 py-1 text-sm hover:bg-opacity-50 transition-colors duration-200 ${
         active ? "ring-2 ring-offset-2 ring-[#FCBA28]" : ""
-      }`}
+      } mr-2 mb-2`}
       onClick={(e) => {
         e.stopPropagation();
         onClick();
